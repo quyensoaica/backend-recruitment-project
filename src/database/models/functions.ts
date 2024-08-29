@@ -1,43 +1,40 @@
 import { Model, DataTypes } from "sequelize";
 import connection from "../connection";
-import Profile from "./profiles";
-import GroupRole from "./groupRoles";
+import Permission from "./permissions";
 
-interface UserAttributes {
-  id?: number;
-  email: string;
-  password: string;
-  fullName: string;
-  phoneNumber: string;
-  avatar: string;
-  groupRoleId: string;
-  isBlocked: boolean;
+interface FunctionAttributes {
+  id?: string;
+
+  name: string;
+  displayName: string;
+  description: string;
+  functionLink: string;
+  parentId: string;
+
   isDeleted: boolean;
   isActive: boolean;
-  isUpdated: boolean;
 
   updatedAt?: Date;
   createdAt?: Date;
 }
 
-class User extends Model<UserAttributes> implements UserAttributes {
-  public id!: number;
-  public email!: string;
-  public password!: string;
-  public fullName!: string;
-  public phoneNumber!: string;
-  public avatar!: string;
-  public groupRoleId!: string;
-  public isBlocked!: boolean;
+class Function extends Model<FunctionAttributes> implements FunctionAttributes {
+  public id!: string;
+
+  public name!: string;
+  public description!: string;
+  public displayName!: string;
+  public functionLink!: string;
+  public parentId!: string;
+
   public isDeleted!: boolean;
   public isActive!: boolean;
-  public isUpdated!: boolean;
 
   public readonly updatedAt!: Date;
   public readonly createdAt!: Date;
 }
 
-User.init(
+Function.init(
   {
     id: {
       allowNull: false,
@@ -45,42 +42,34 @@ User.init(
       autoIncrement: false,
       type: DataTypes.STRING,
     },
-    email: {
+    name: {
       allowNull: false,
       type: DataTypes.STRING,
       unique: true,
     },
-    password: {
+    displayName: {
       allowNull: false,
       type: DataTypes.STRING,
     },
-    fullName: {
-      allowNull: false,
-      type: DataTypes.STRING,
+    description: {
+      allowNull: true,
+      type: DataTypes.TEXT,
     },
-    phoneNumber: {
+    functionLink: {
       allowNull: true,
       type: DataTypes.STRING,
     },
-    avatar: {
+    parentId: {
       allowNull: true,
-      type: DataTypes.STRING,
-    },
-    groupRoleId: {
-      allowNull: false,
       type: DataTypes.STRING,
       references: {
-        model: "GroupRoles",
+        model: "Functions",
         key: "id",
       },
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    isBlocked: {
-      allowNull: false,
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
+
     isDeleted: {
       allowNull: false,
       type: DataTypes.BOOLEAN,
@@ -90,11 +79,6 @@ User.init(
       allowNull: false,
       type: DataTypes.BOOLEAN,
       defaultValue: true,
-    },
-    isUpdated: {
-      allowNull: false,
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
     },
 
     createdAt: {
@@ -110,12 +94,13 @@ User.init(
   },
   {
     sequelize: connection,
-    modelName: "Users",
+    modelName: "Functions",
     timestamps: true,
   }
 );
 
-User.belongsTo(GroupRole, { foreignKey: "groupRoleId", as: "groupRole" });
-User.hasOne(Profile, { foreignKey: "userId", as: "profile" });
+Function.hasMany(Function, { foreignKey: "parentId", as: "children" });
+Function.belongsTo(Function, { foreignKey: "parentId", as: "parent" });
+Function.hasMany(Permission, { foreignKey: "functionId", as: "permissions" });
 
-export default User;
+export default Function;
