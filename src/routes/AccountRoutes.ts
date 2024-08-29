@@ -1,4 +1,3 @@
-import User from "@/database/models/users";
 import { BaseRoute } from "./BaseRoute";
 
 class AccountRoutes extends BaseRoute {
