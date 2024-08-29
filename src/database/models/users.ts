@@ -1,5 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import connection from "../connection";
+import Profile from "./profiles";
+import GroupRole from "./groupRoles";
 
 interface UserAttributes {
   id?: number;
@@ -8,7 +10,7 @@ interface UserAttributes {
   fullName: string;
   phoneNumber: string;
   avatar: string;
-  groupRole: string;
+  groupRoleId: string;
   isBlocked: boolean;
   isDeleted: boolean;
   isActive: boolean;
@@ -25,7 +27,7 @@ class User extends Model<UserAttributes> implements UserAttributes {
   public fullName!: string;
   public phoneNumber!: string;
   public avatar!: string;
-  public groupRole!: string;
+  public groupRoleId!: string;
   public isBlocked!: boolean;
   public isDeleted!: boolean;
   public isActive!: boolean;
@@ -64,9 +66,15 @@ User.init(
       allowNull: true,
       type: DataTypes.STRING,
     },
-    groupRole: {
+    groupRoleId: {
       allowNull: false,
       type: DataTypes.STRING,
+      references: {
+        model: "GroupRoles",
+        key: "id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
     },
     isBlocked: {
       allowNull: false,
@@ -106,5 +114,8 @@ User.init(
     timestamps: true,
   }
 );
+
+User.belongsTo(GroupRole, { foreignKey: "groupRoleId", as: "groupRole" });
+User.hasOne(Profile, { foreignKey: "userId", as: "profile" });
 
 export default User;
