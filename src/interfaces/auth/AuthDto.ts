@@ -1,3 +1,5 @@
+import { IAccessTokenResponse } from "./IJWTService";
+
 export interface IUserLoginData {
   email: string;
   password: string;
@@ -8,17 +10,31 @@ export interface IUserRegisterData {
   email: string;
   password: string;
   fullName: string;
+  role: "3" | "4";
 }
 
 export interface IUserLoginResponse {
-  email: string;
-  fullName: string;
-  token: string;
-  refreshToken: string;
-  isRememberMe: boolean;
+  accessToken: IAccessTokenResponse;
+  userInfo: {
+    userId: string;
+    email: string;
+    fullName: string;
+    role: {
+      roleName: string;
+      displayName: string;
+    };
+  };
+  permissions: IFunctionByRole[];
 }
 
 export interface IUserRegisterResponse {
   email: string;
   fullName: string;
+}
+
+export interface IFunctionByRole {
+  id: string;
+  name: string;
+  displayName: string;
+  functionLink: string;
 }

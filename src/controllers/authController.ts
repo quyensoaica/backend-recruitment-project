@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { IUserLoginData } from "@/interfaces/auth/AuthDto";
+import { IUserLoginData, IUserRegisterData } from "@/interfaces/auth/AuthDto";
 import IAuthService from "@/interfaces/auth/IAuthService";
-import AuthService from "@/services/AuthServices";
 import { IResponseBase } from "@/interfaces/base/IResponseBase";
+import AuthService from "@/services/auth/AuthServices";
 
 export class AuthController {
   private _authService: IAuthService;
@@ -29,5 +29,11 @@ export class AuthController {
       };
       res.status(500).json(customError);
     }
+  }
+
+  async register(req: Request, res: Response) {
+    const registerData: IUserRegisterData = req.body;
+    const response = await this._authService.register(registerData);
+    res.status(response.status).json(response);
   }
 }
