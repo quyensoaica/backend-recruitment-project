@@ -9,6 +9,7 @@ import { asyncLocalStorageMiddleware } from "./middlewares";
 import { Securities } from "./constants/Securities";
 import { ENV } from "./constants/env";
 import AppRoute from "./routes";
+import AppDataSource from "./data-source";
 
 class Application {
   server!: Server;
@@ -46,6 +47,15 @@ class Application {
   }
   close() {
     this.serverInstance.close();
+  }
+  connectDB() {
+    AppDataSource.initialize()
+      .then(() => {
+        console.log("Connected to PostgreSQL");
+      })
+      .catch((err) => {
+        console.error("Error connecting to PostgreSQL:", err);
+      });
   }
 }
 export default Application;

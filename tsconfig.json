@@ -13,6 +13,8 @@
     "noImplicitReturns": false,
     "noImplicitThis": true,
     "noUnusedLocals": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "sourceMap": true,
     "strictNullChecks": true,
     "strict": true,
@@ -21,6 +23,7 @@
     "typeRoots": ["./src/typings", "../../node_modules/@types"],
     "outDir": "build",
     "baseUrl": ".",
+    "types": ["node"],
     "paths": {
       "@/*": ["src/*"]
     }
