@@ -5,7 +5,7 @@
  * fullName: string;
  * phoneNumber: string;
  * avatar: string;
- * groupRole: string;
+ * groupRoleId: string;
  * isBlocked: boolean;
  * isDeleted: boolean;
  * isActive: boolean;
