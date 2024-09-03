@@ -1,5 +1,12 @@
 type CurrentUser = {
-    id: number;
-    userName: string;
-    roles?: string[];
-};  
+  id: string;
+  email: string;
+  roleName: string;
+  role: [
+    {
+      id: number;
+      name: string;
+      displayName: string;
+    }
+  ];
+};

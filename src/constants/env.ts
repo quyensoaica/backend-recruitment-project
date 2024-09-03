@@ -1,13 +1,9 @@
 import "dotenv/config";
 export const ENV = {
   APP_PORT: process.env.APP_PORT || 5555,
-  DATABASE_URL: process.env.DATABASE_URL || "mongodb://: process.env.db://,localhost:27017/recruitment-project",
   SECRET_KEY: process.env.SECRET_KEY || "secret",
-  MONGODB_URI: process.env.MONGODB_URI || "mongodb://localhost:27017/recruitment-project",
-  DATABASE_NAME: process.env.DATABASE_NAME || "recruitment-project",
-  DATABASE_PASSWORD: process.env.DATABASE_PASSWORD || "password",
-  DATABASE_USERNAME: process.env.DATABASE_USERNAME || "username",
-  APP_HOST: process.env.APP_HOST || "localhost",
+  ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
+  ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN || "1h",
   APP_ORIGIN: process.env.APP_ORIGIN || "http://localhost:3000",
 
   DB_USERNAME: process.env.DB_USERNAME || "postgres",
@@ -20,4 +16,7 @@ export const ENV = {
   DB_POOL_MIN: process.env.DB_POOL_MIN,
   DB_POOL_ACQUIRE: process.env.DB_POOL_ACQUIRE,
   DB_POOL_IDLE: process.env.DB_POOL_IDLE,
+
+  PASSWORD_SALT: process.env.PASSWORD_SALT || 10,
+  AUTH_MODE: process.env.AUTH_MODE || "COOKIE",
 };

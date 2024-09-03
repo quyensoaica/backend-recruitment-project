@@ -31,5 +31,5 @@ export class Permission {
 
   @ManyToOne(() => GroupRole, (groupRole) => groupRole.users)
   @JoinColumn({ name: "groupRoleId" })
-  role!: GroupRole;
+  groupRole!: GroupRole;
 }

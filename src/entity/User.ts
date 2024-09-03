@@ -16,8 +16,8 @@ export class User {
   @Column({ type: "varchar", length: 1000, nullable: false })
   fullName!: string;
 
-  @Column({ type: "varchar", length: 1000 })
-  avatar!: string;
+  @Column({ type: "varchar", length: 1000, nullable: true })
+  avatar?: string;
 
   @Column({ type: "varchar", length: 255, nullable: false })
   groupRoleId!: string;
