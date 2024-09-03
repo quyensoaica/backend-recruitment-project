@@ -18,4 +18,5 @@ export const ENV = {
   DB_POOL_IDLE: process.env.DB_POOL_IDLE,
 
   PASSWORD_SALT: process.env.PASSWORD_SALT || 10,
+  AUTH_MODE: process.env.AUTH_MODE || "COOKIE",
 };

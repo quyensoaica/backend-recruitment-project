@@ -1,33 +1,22 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "allowUnreachableCode": false,
-    "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": true,
-    "downlevelIteration": true,
+    "module": "commonjs",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "CommonJS",
-    "noImplicitAny": true,
-    "resolveJsonModule": true,
-    "noImplicitReturns": false,
-    "noImplicitThis": true,
-    "noUnusedLocals": false,
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "./dist",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "sourceMap": true,
-    "strictNullChecks": true,
-    "strict": true,
-    "pretty": true,
-    "target": "ES6",
-    "typeRoots": ["./src/typings", "../../node_modules/@types"],
-    "outDir": "build",
     "baseUrl": ".",
-    "types": ["node"],
+    "rootDir": ".",
+    "typeRoots": ["./node_module/@types", "./src/types"],
+    "types": ["node", "express"],
     "paths": {
       "@/*": ["src/*"]
     }
   },
-  "include": ["./**/*.ts"],
-  "exclude": ["node_modules", "build", "dist"]
+  "lib": ["es2015"],
+  "exclude": ["node_modules", "src/tests"],
+  "include": ["src"]
 }

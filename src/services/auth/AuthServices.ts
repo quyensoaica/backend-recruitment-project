@@ -28,6 +28,7 @@ export default class AuthService implements IAuthService {
     const checkPassword = bcrypt.compareSync(plaintextPassword, hashPassword);
     return checkPassword;
   }
+
   async getUserByEmail(email: string): Promise<IResponseBase> {
     try {
       if (!email) {
@@ -68,7 +69,7 @@ export default class AuthService implements IAuthService {
     }
   }
 
-  async login(userLogin: IUserLoginData): Promise<IResponseBase> {
+  async login(userLogin: IUserLoginData, setAccessTokenToCookie: (data: string) => void): Promise<IResponseBase> {
     try {
       if (!userLogin.email || !userLogin.password) {
         return {
@@ -122,6 +123,7 @@ export default class AuthService implements IAuthService {
       };
 
       const token = this._JwtService.generateAccessToken(tokenPayload);
+      setAccessTokenToCookie(token.token);
       const loginData: IUserLoginResponse = {
         accessToken: token,
         userInfo: {
@@ -218,7 +220,7 @@ export default class AuthService implements IAuthService {
           errorMessage: "Đăng kí tài khoản không thành công, vui lòng kiểm tra lại",
           data: null,
           error: {
-            message: "Dăng kí tài khoản thất bại",
+            message: "Đăng kí tài khoản thất bại",
             errorDetail: "Đăng kí tài khoản không thành công, vui lòng kiểm tra lại",
           },
         };
@@ -233,6 +235,57 @@ export default class AuthService implements IAuthService {
           id: newUser.id,
           role: newUser.groupRole,
         },
+        error: null,
+      };
+    } catch {
+      return {
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        success: false,
+        errorMessage: "Internal Server Error",
+        data: null,
+        error: {
+          message: "Internal Server Error",
+          errorDetail: "Internal Server Error",
+        },
+      };
+    }
+  }
+
+  async getMe(userId: string): Promise<IResponseBase> {
+    if (!userId) {
+      return {
+        status: StatusCodes.BAD_REQUEST,
+        success: false,
+        errorMessage: "User Id is required",
+        data: null,
+        error: {
+          message: "Bad Request",
+          errorDetail: "User Id is required",
+        },
+      };
+    }
+    try {
+      const user = await Repo.UserRepo.createQueryBuilder("user")
+        .innerJoin("user.groupRole", "groupRole")
+        .where("user.id = :userId", { userId })
+        .select(["user.id", "user.email", "user.avatar", "user.isBlocked", "user.fullName", "groupRole.name", "groupRole.displayName"])
+        .getOne();
+      if (!user) {
+        return {
+          status: StatusCodes.NOT_FOUND,
+          success: false,
+          errorMessage: "Không tìm thấy thông tin người dùng",
+          data: null,
+          error: {
+            message: "User not found",
+            errorDetail: "User not found",
+          },
+        };
+      }
+      return {
+        status: StatusCodes.OK,
+        success: true,
+        data: user,
         error: null,
       };
     } catch {

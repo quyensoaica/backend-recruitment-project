@@ -13,27 +13,27 @@ export class AuthController {
 
   async login(req: Request, res: Response) {
     const loginData: IUserLoginData = req.body;
-    try {
-      const response = await this._authService.login(loginData);
-      res.status(response.status).json(response);
-    } catch (error: any) {
-      const customError: IResponseBase = {
-        status: 500,
-        success: false,
-        errorMessage: "Internal Server Error",
-        data: null,
-        error: {
-          message: error.message,
-          errorDetail: error.stack,
-        },
-      };
-      res.status(500).json(customError);
-    }
+
+    const setAccessTokenToCookie = (data: string) => {
+      res.cookie("accessToken", data, {
+        secure: true,
+        sameSite: "none",
+      });
+    };
+
+    const response = await this._authService.login(loginData, setAccessTokenToCookie);
+    res.status(response.status).json(response);
   }
 
   async register(req: Request, res: Response) {
     const registerData: IUserRegisterData = req.body;
     const response = await this._authService.register(registerData);
+    res.status(response.status).json(response);
+  }
+
+  async getMe(req: Request, res: Response) {
+    const userId = req.user.id;
+    const response = await this._authService.getMe(userId);
     res.status(response.status).json(response);
   }
 }

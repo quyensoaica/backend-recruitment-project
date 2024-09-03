@@ -2,13 +2,16 @@ import { Request, Response } from "express";
 import { Request as ExpressRequest } from "express";
 import { BaseRoute } from "./BaseRoute";
 import { AuthController } from "@/controllers/authController";
+import AuthenticationMiddleware from "@/middlewares/AuthenticateMiddleware";
 
 class AuthRoutes extends BaseRoute {
   private _authController: AuthController;
+  private _authenticationMiddleware: AuthenticationMiddleware;
 
   constructor() {
     super();
     this._authController = new AuthController();
+    this._authenticationMiddleware = new AuthenticationMiddleware();
     this.init();
   }
 
@@ -19,6 +22,15 @@ class AuthRoutes extends BaseRoute {
     this.router.post("/login", (req: ExpressRequest, res: Response) => {
       this._authController.login(req, res);
     });
+    this.router.get(
+      "/get-me",
+      (req: ExpressRequest, res: Response, next) => {
+        this._authenticationMiddleware.authenticate(req, res, next);
+      },
+      (req: ExpressRequest, res: Response) => {
+        this._authController.getMe(req, res);
+      }
+    );
   }
 }
 
