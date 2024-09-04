@@ -12,6 +12,9 @@ export default class AuthenticationMiddleware {
     this._jwtService = new JwtService();
   }
   public authenticate: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+    const nonSecurePaths = ["/", "/auth/login", "/auth/register"];
+    if (nonSecurePaths.includes(req.path)) return next();
+
     let accessToken = "";
     switch (ENV.AUTH_MODE) {
       case "COOKIE": {

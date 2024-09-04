@@ -23,16 +23,16 @@ export class User {
   groupRoleId!: string;
 
   @Column({ type: "boolean", nullable: false, default: false })
-  isBlocked!: string;
+  isBlocked!: boolean;
 
   @Column({ type: "boolean", nullable: false, default: true })
-  isActive!: string;
+  isActive!: boolean;
 
   @Column({ type: "boolean", nullable: false, default: false })
-  isDeleted!: string;
+  isDeleted!: boolean;
 
   @Column({ type: "boolean", nullable: false, default: false })
-  isUpdated!: string;
+  isUpdated!: boolean;
 
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt!: Date;
