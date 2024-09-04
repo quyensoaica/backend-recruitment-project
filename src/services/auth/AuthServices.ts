@@ -11,6 +11,7 @@ import IRoleService from "@/interfaces/auth/IRoleService";
 import RoleService from "./RoleService";
 import { v4 as uuidv4 } from "uuid";
 import EGroupRole from "@/constants/GroupRole";
+import Extensions from "@/utils/Extensions";
 
 export default class AuthService implements IAuthService {
   private _JwtService!: IJWTService;
@@ -19,15 +20,15 @@ export default class AuthService implements IAuthService {
     this._JwtService = new JwtService();
     this._RoleService = new RoleService();
   }
-  private hashPassword = (password: string): string => {
-    const salt = bcrypt.genSaltSync(Number(ENV.PASSWORD_SALT));
-    const hash = bcrypt.hashSync(password, salt);
-    return hash;
-  };
-  private async comparePassword(plaintextPassword: string, hashPassword: string): Promise<boolean> {
-    const checkPassword = bcrypt.compareSync(plaintextPassword, hashPassword);
-    return checkPassword;
-  }
+  // private hashPassword = (password: string): string => {
+  //   const salt = bcrypt.genSaltSync(Number(ENV.PASSWORD_SALT));
+  //   const hash = bcrypt.hashSync(password, salt);
+  //   return hash;
+  // };
+  // private async comparePassword(plaintextPassword: string, hashPassword: string): Promise<boolean> {
+  //   const checkPassword = bcrypt.compareSync(plaintextPassword, hashPassword);
+  //   return checkPassword;
+  // }
 
   async getUserByEmail(email: string): Promise<IResponseBase> {
     try {
@@ -84,7 +85,7 @@ export default class AuthService implements IAuthService {
         };
       }
       const user = await this.getUserByEmail(userLogin.email);
-      if (!user.success || user.data === null) {
+      if (!user.success || user.data === null || user.data.isDeleted) {
         return {
           status: StatusCodes.NOT_FOUND,
           success: false,
@@ -96,7 +97,7 @@ export default class AuthService implements IAuthService {
           },
         };
       }
-      const checkPass = await this.comparePassword(userLogin.password, user.data.password);
+      const checkPass = await Extensions.comparePassword(userLogin.password, user.data.password);
       if (!checkPass) {
         return {
           status: StatusCodes.UNAUTHORIZED,
@@ -109,6 +110,20 @@ export default class AuthService implements IAuthService {
           },
         };
       }
+
+      if (user.data.isBlocked) {
+        return {
+          status: StatusCodes.FORBIDDEN,
+          success: false,
+          errorMessage: "Tài khoản của bạn đã bị khóa",
+          data: null,
+          error: {
+            message: "Forbidden",
+            errorDetail: "Tài khoản của bạn đã bị khóa",
+          },
+        };
+      }
+
       const userRoles = await this._RoleService.getCurrentUserPermission(user.data.groupRoleId);
 
       if (!userRoles.success) {
@@ -201,7 +216,7 @@ export default class AuthService implements IAuthService {
         };
       }
 
-      const hashPassword = this.hashPassword(userRegister.password);
+      const hashPassword = Extensions.hashPassword(userRegister.password);
 
       const registerData = {
         id: uuidv4(),
@@ -268,7 +283,7 @@ export default class AuthService implements IAuthService {
       const user = await Repo.UserRepo.createQueryBuilder("user")
         .innerJoin("user.groupRole", "groupRole")
         .where("user.id = :userId", { userId })
-        .select(["user.id", "user.email", "user.avatar", "user.isBlocked", "user.fullName", "groupRole.name", "groupRole.displayName"])
+        .select(["user.id", "user.email", "user.avatar", "user.isBlocked", "user.isUpdated", "user.fullName", "groupRole.name", "groupRole.displayName"])
         .getOne();
       if (!user) {
         return {
