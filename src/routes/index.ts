@@ -5,6 +5,9 @@ import { BaseRoute } from "./BaseRoute";
 import AuthRoutes from "./AuthRoutes";
 import UserRoutes from "./UserRoutes";
 import AuthenticationMiddleware from "@/middlewares/AuthenticateMiddleware";
+import ProvinceRoute from "./ProvinceRoute";
+import MemberCountRoutes from "./MemberCountRoutes";
+import CompanyRoutes from "./CompanyRoutes";
 
 class AppRoute extends BaseRoute {
   private _authenticationMiddleware: AuthenticationMiddleware;
@@ -22,6 +25,9 @@ class AppRoute extends BaseRoute {
     });
     this.router.use("/auth", AuthRoutes);
     this.router.use("/users", UserRoutes);
+    this.router.use("/provinces", ProvinceRoute);
+    this.router.use("/member-counts", MemberCountRoutes);
+    this.router.use("/companies", CompanyRoutes);
 
     this.router.get("/status", (req, res) => {
       res.status(StatusCodes.OK).json({

@@ -51,8 +51,11 @@ export class Company {
   @Column({ type: "boolean", nullable: false, default: false })
   isDeleted!: boolean;
 
-  @Column({ type: "boolean", nullable: false, default: false })
-  isBrowsing!: boolean;
+  @Column({ type: "integer", nullable: false, default: 0 })
+  status!: number;
+
+  @Column({ type: "varchar", length: 1000, nullable: true })
+  feedbackFromManager?: string;
 
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt!: Date;
@@ -62,7 +65,7 @@ export class Company {
 
   @ManyToOne(() => Province, (province) => province.id, { onDelete: "CASCADE" })
   @JoinColumn({ name: "provinceId" })
-  groupRole!: GroupRole;
+  province!: Province;
 
   @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })
   @JoinColumn({ name: "recruiterId" })
