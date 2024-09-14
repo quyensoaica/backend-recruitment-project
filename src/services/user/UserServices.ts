@@ -1,5 +1,5 @@
 import { ErrorMessages } from "@/constants/ErrorMessages";
-import { ILike } from "typeorm";
+import { Brackets, ILike } from "typeorm";
 import { IResponseBase } from "@/interfaces/base/IResponseBase";
 import IUserService from "@/interfaces/user/IUserService";
 import { Repo } from "@/repository";
@@ -59,7 +59,7 @@ export default class UserService implements IUserService {
 
   async getAllUser(page: number = 1, limit: number = 10, search: string = ""): Promise<IResponseBase> {
     try {
-      const [users, totalUser] = await Repo.UserRepo.findAndCount({
+      const totalCountQuery = Repo.UserRepo.count({
         where: [
           {
             isDeleted: false,
@@ -70,11 +70,37 @@ export default class UserService implements IUserService {
             email: ILike(`%${search}%`),
           },
         ],
-
-        select: ["id", "avatar", "fullName", "groupRoleId", "groupRole", "email", "isActive", "isBlocked", "isDeleted"],
-        skip: (page - 1) * limit,
-        take: limit,
       });
+      const usersQuery = Repo.UserRepo.createQueryBuilder("user")
+        .innerJoinAndSelect("user.groupRole", "groupRole")
+        .where("user.isDeleted = :isDeleted", { isDeleted: false })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where("user.fullName ILIKE :fullName", { fullName: `%${search}%` }).orWhere("user.email ILIKE :email", {
+              email: `%${search}%`,
+            });
+          })
+        )
+        .orderBy("user.createdAt", "DESC")
+        .select([
+          "user.id",
+          "user.avatar",
+          "user.fullName",
+          "user.groupRoleId",
+          "user.groupRole",
+          "user.email",
+          "user.isActive",
+          "user.isBlocked",
+          "user.isDeleted",
+          "user.createdAt",
+          "groupRole.name",
+          "groupRole.displayName",
+        ])
+        .skip(Number((page - 1) * limit))
+        .take(limit)
+        .getMany();
+
+      const [totalItem, users] = await Promise.all([totalCountQuery, usersQuery]);
       return {
         status: StatusCodes.OK,
         success: false,
@@ -83,12 +109,12 @@ export default class UserService implements IUserService {
           users,
           page,
           limit,
-          totalUser,
-          totalPage: Math.ceil(totalUser / limit),
+          totalItem,
+          totalPage: Math.ceil(totalItem / limit),
         },
         error: null,
       };
-    } catch {
+    } catch (error: any) {
       return {
         status: StatusCodes.INTERNAL_SERVER_ERROR,
         success: false,
@@ -96,7 +122,7 @@ export default class UserService implements IUserService {
         data: null,
         error: {
           message: ErrorMessages.INTERNAL_SERVER_ERROR,
-          errorDetail: ErrorMessages.INTERNAL_SERVER_ERROR,
+          errorDetail: error.message,
         },
       };
     }
@@ -104,7 +130,7 @@ export default class UserService implements IUserService {
 
   async getDeletedUsers(page: number = 1, limit: number = 10, search: string = ""): Promise<IResponseBase> {
     try {
-      const [users, totalUser] = await Repo.UserRepo.findAndCount({
+      const [users, totalItem] = await Repo.UserRepo.findAndCount({
         where: [
           {
             isDeleted: true,
@@ -128,8 +154,8 @@ export default class UserService implements IUserService {
           users,
           page,
           limit,
-          totalUser,
-          totalPage: Math.ceil(totalUser / limit),
+          totalItem,
+          totalPage: Math.ceil(totalItem / limit),
         },
         error: null,
       };

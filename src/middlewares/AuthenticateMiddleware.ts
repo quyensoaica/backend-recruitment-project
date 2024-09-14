@@ -12,7 +12,13 @@ export default class AuthenticationMiddleware {
     this._jwtService = new JwtService();
   }
   public authenticate: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
-    const nonSecurePaths = ["/", "/auth/login", "/auth/register"];
+    const nonSecurePaths = [
+      "/",
+      "/auth/login",
+      "/auth/register",
+      "/provinces/get-provincies",
+      "/member-counts/get-member-counts",
+    ];
     if (nonSecurePaths.includes(req.path)) return next();
 
     let accessToken = "";

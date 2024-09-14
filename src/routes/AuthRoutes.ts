@@ -31,6 +31,9 @@ class AuthRoutes extends BaseRoute {
         this._authController.getMe(req, res);
       }
     );
+    this.router.get("/get-group-roles", (req: ExpressRequest, res: Response) => {
+      this._authController.getAllGroupRoles(req, res);
+    });
   }
 }
 

@@ -3,12 +3,16 @@ import { IUserLoginData, IUserRegisterData } from "@/interfaces/auth/AuthDto";
 import IAuthService from "@/interfaces/auth/IAuthService";
 import { IResponseBase } from "@/interfaces/base/IResponseBase";
 import AuthService from "@/services/auth/AuthServices";
+import IRoleService from "@/interfaces/auth/IRoleService";
+import RoleService from "@/services/auth/RoleService";
 
 export class AuthController {
   private _authService: IAuthService;
+  private _roleService: IRoleService;
 
   constructor() {
     this._authService = new AuthService();
+    this._roleService = new RoleService();
   }
 
   async login(req: Request, res: Response) {
@@ -34,6 +38,11 @@ export class AuthController {
   async getMe(req: Request, res: Response) {
     const userId = req.user.id;
     const response = await this._authService.getMe(userId);
+    res.status(response.status).json(response);
+  }
+
+  async getAllGroupRoles(req: Request, res: Response) {
+    const response = await this._roleService.getAllGroupRoles();
     res.status(response.status).json(response);
   }
 }

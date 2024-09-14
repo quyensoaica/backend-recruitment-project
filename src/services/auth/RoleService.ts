@@ -116,4 +116,31 @@ export default class RoleService implements IRoleService {
       };
     }
   }
+
+  async getAllGroupRoles(): Promise<IResponseBase> {
+    try {
+      const groupRoles = await Repo.GroupRoleRepo.find({
+        where: {
+          isDeleted: false,
+        },
+      });
+      return {
+        status: StatusCodes.OK,
+        success: true,
+        data: groupRoles,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        success: false,
+        errorMessage: "Internal Server Error",
+        data: null,
+        error: {
+          message: "Internal Server Error",
+          errorDetail: error.message,
+        },
+      };
+    }
+  }
 }

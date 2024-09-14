@@ -10,7 +10,7 @@ export class UserController {
   }
 
   async getAllUser(req: Request, res: Response) {
-    const { page, limit, search } = req.query;
+    const { page = 1, limit = 10, search } = req.query;
     const users = await this._userService.getAllUser(+page, +limit, search as string);
     return res.status(users.status).json(users);
   }
