@@ -45,6 +45,9 @@ export class Company {
   @Column({ type: "varchar", length: 255, nullable: false })
   companyBanner?: string;
 
+  @Column({ type: "varchar", length: 1000, nullable: true })
+  companyDescription?: string;
+
   @Column({ type: "boolean", nullable: false, default: true })
   isActive!: boolean;
 
@@ -69,7 +72,7 @@ export class Company {
 
   @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })
   @JoinColumn({ name: "recruiterId" })
-  user!: User;
+  recruiter!: User;
 
   @ManyToOne(() => MemberCount, (memberCount) => memberCount.id, { onDelete: "CASCADE" })
   @JoinColumn({ name: "memberCountId" })

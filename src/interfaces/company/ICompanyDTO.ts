@@ -10,6 +10,7 @@ export interface IRegisterCompanyDTO {
   companyIntroduce?: string;
   companyLogo?: string;
   companyBanner?: string;
+  companyDescription?: string;
   userId: string;
   memberCountId: string;
 }
