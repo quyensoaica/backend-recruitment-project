@@ -1,3 +1,4 @@
+import { EGenderStatus } from "../user/UserDTO";
 import { IAccessTokenResponse } from "./IJWTService";
 
 export interface IUserLoginData {
@@ -37,4 +38,14 @@ export interface IFunctionByRole {
   name: string;
   displayName: string;
   functionLink: string;
+}
+
+export interface IUpdateProfilePayload {
+  id: string;
+  avatar: string;
+  banner: string;
+  fullName: string;
+  birthday: string;
+  gerder: EGenderStatus;
+  phoneNumber: string;
 }

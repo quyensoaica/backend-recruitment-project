@@ -1,10 +1,11 @@
 import { IResponseBase } from "../base/IResponseBase";
-import { IUserLoginData, IUserLoginResponse, IUserRegisterData, IUserRegisterResponse } from "./AuthDto";
+import { IUpdateProfilePayload, IUserLoginData, IUserLoginResponse, IUserRegisterData, IUserRegisterResponse } from "./AuthDto";
 
 export default interface IAuthService {
   login(userLogin: IUserLoginData, setAccessTokenToCookie: (data: string) => void): Promise<IResponseBase>;
   register(userRegister: IUserRegisterData): Promise<IResponseBase>;
   getMe(userId: string): Promise<IResponseBase>;
+  updateMyProfile(userId: string, data: IUpdateProfilePayload): Promise<IResponseBase>;
   // register(email: string, password: string): Promise<string>;
   // logout(): Promise<string>;
   // verifyEmail(token: string): Promise<string>;

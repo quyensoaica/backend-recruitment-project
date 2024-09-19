@@ -45,4 +45,11 @@ export class AuthController {
     const response = await this._roleService.getAllGroupRoles();
     res.status(response.status).json(response);
   }
+
+  async updateMyProfile(req: Request, res: Response) {
+    const userId = req.user.id;
+    const payload = req.body;
+    const response = await this._authService.updateMyProfile(userId, payload);
+    res.status(response.status).json(response);
+  }
 }

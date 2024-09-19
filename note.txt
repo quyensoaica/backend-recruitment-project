@@ -220,3 +220,74 @@
  * endTime: string;
  * description: string;
 */
+
+CVCreateds: [
+  {
+    id: string;
+    displayName: string;
+    fullName: string;
+    avatar: string;
+    position: string;
+
+    infomations: {
+      data: [
+        {value: 'abc@gmail.com', icon: 'EmailIcon'},
+        {value: 'address', icon: 'AddressIcon'},
+        {value: 'phoneNumber', icon: 'phoneNumberIcon'},
+        {value: 'birthday', icon: 'birthdayIcon'},
+      ],
+      position: 0,
+      box: "box-0"
+    },
+    experiences: {
+      data: [
+        experienceId,
+        experienceId
+      ],
+      position: 0,
+      box: "box-1"
+    },
+    educations: {
+      data: [
+        educationId,
+        educationId
+      ],
+      position: 1,
+      box: "box-1"
+    },
+    awards: {
+      data: [
+        awardId,
+        awardId
+      ],
+      position: 0,
+      box: "box-2"
+    }
+  }
+]
+
+boxs: {
+  box-0: [
+    {
+      name: 'infomations',
+      data: []
+    }
+  ],
+  box-1: [
+    {
+      name: 'educations',
+      data: []
+    },
+    {
+      name: 'awards',
+      data: []
+    }
+  ]
+}
+
+
+
+
+executeQuery() => thực hiện câu lệnh select, trả về một tập hợp các kết quả
+executeUpdate() => Thực hiện câu lệnh update, trả về số lượng các bản ghi bị ảnh hưởng, bị thay đổi.
+execute() => thực hiện bất kì câu lệnh nào, trả về dữ liệu kiểu boolean

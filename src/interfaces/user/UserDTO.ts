@@ -12,3 +12,8 @@ export interface IUpdateUserData {
   avatar?: string;
   groupRoleId?: string;
 }
+export enum EGenderStatus {
+  FEMALE = "F",
+  MALE = "M",
+  OTHER = "O",
+}

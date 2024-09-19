@@ -12,6 +12,7 @@ import {
 } from "typeorm";
 import { GroupRole } from "./GroupRole";
 import { Profile } from "./Profile";
+import { EGenderStatus } from "@/interfaces/user/UserDTO";
 
 @Entity({ name: "Users" })
 export class User {
@@ -27,11 +28,23 @@ export class User {
   @Column({ type: "varchar", length: 1000, nullable: false })
   fullName!: string;
 
+  @Column({ type: "varchar", length: 255, nullable: false })
+  groupRoleId!: string;
+
+  @Column({ type: "varchar", length: 15, nullable: true })
+  phoneNumber?: string;
+
+  @Column({ type: "varchar", nullable: true })
+  birthday?: string;
+
+  @Column({ type: "char", length: 1, enum: EGenderStatus, default: EGenderStatus.MALE })
+  gender!: EGenderStatus;
+
   @Column({ type: "varchar", length: 1000, nullable: true })
   avatar?: string;
 
-  @Column({ type: "varchar", length: 255, nullable: false })
-  groupRoleId!: string;
+  @Column({ type: "varchar", length: 1000, nullable: true })
+  banner?: string;
 
   @Column({ type: "boolean", nullable: false, default: false })
   isBlocked!: boolean;

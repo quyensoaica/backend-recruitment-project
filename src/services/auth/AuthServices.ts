@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { IUserLoginData, IUserLoginResponse, IUserRegisterData } from "@/interfaces/auth/AuthDto";
+import { IUpdateProfilePayload, IUserLoginData, IUserLoginResponse, IUserRegisterData } from "@/interfaces/auth/AuthDto";
 import IAuthService from "@/interfaces/auth/IAuthService";
 import { IResponseBase } from "@/interfaces/base/IResponseBase";
 import { Repo } from "@/repository";
@@ -283,8 +283,12 @@ export default class AuthService implements IAuthService {
       const user = await Repo.UserRepo.createQueryBuilder("user")
         .innerJoin("user.groupRole", "groupRole")
         .where("user.id = :userId", { userId })
-        .select(["user.id", "user.email", "user.avatar", "user.isBlocked", "user.isUpdated", "user.fullName", "groupRole.name", "groupRole.displayName"])
+        .select(["user", "groupRole.name", "groupRole.displayName"])
         .getOne();
+      delete user?.password;
+      delete user?.isDeleted;
+      delete user?.updatedAt;
+      delete user?.createdAt;
       if (!user) {
         return {
           status: StatusCodes.NOT_FOUND,
@@ -304,6 +308,114 @@ export default class AuthService implements IAuthService {
         error: null,
       };
     } catch {
+      return {
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        success: false,
+        errorMessage: "Internal Server Error",
+        data: null,
+        error: {
+          message: "Internal Server Error",
+          errorDetail: "Internal Server Error",
+        },
+      };
+    }
+  }
+
+  async updateMyProfile(userId: string, data: IUpdateProfilePayload): Promise<IResponseBase> {
+    try {
+      if (!userId) {
+        return {
+          status: StatusCodes.BAD_REQUEST,
+          success: false,
+          errorMessage: "User Id is required",
+          data: null,
+          error: {
+            message: "Bad Request",
+            errorDetail: "User Id is required",
+          },
+        };
+      }
+      if (!data.fullName) {
+        return {
+          status: StatusCodes.BAD_REQUEST,
+          success: false,
+          errorMessage: "Full Name is required",
+          data: null,
+          error: {
+            message: "Bad Request",
+            errorDetail: "Full Name is required",
+          },
+        };
+      }
+      if (!data.birthday) {
+        return {
+          status: StatusCodes.BAD_REQUEST,
+          success: false,
+          errorMessage: "Birthday is required",
+          data: null,
+          error: {
+            message: "Bad Request",
+            errorDetail: "Birthday is required",
+          },
+        };
+      }
+      const user = await Repo.UserRepo.findOne({
+        where: {
+          id: userId,
+        },
+      });
+      if (!user) {
+        return {
+          status: StatusCodes.NOT_FOUND,
+          success: false,
+          errorMessage: "User not found",
+          data: null,
+          error: {
+            message: "Not Found",
+            errorDetail: "User not found",
+          },
+        };
+      }
+      if (user.isDeleted || user.isBlocked) {
+        return {
+          status: StatusCodes.FORBIDDEN,
+          success: false,
+          errorMessage: "User is blocked or deleted",
+          data: null,
+          error: {
+            message: "Forbidden",
+            errorDetail: "User is blocked or deleted",
+          },
+        };
+      }
+      user.fullName = data.fullName;
+      user.birthday = data.birthday;
+      user.banner = data.banner;
+      user.avatar = data.avatar;
+      user.gender = data.gerder;
+      user.phoneNumber = data.phoneNumber;
+      user.isUpdated = true;
+
+      const updatedUser = await Repo.UserRepo.save(user);
+      if (!updatedUser) {
+        return {
+          status: StatusCodes.INTERNAL_SERVER_ERROR,
+          success: false,
+          errorMessage: "Update profile failed",
+          data: null,
+          error: {
+            message: "Internal Server Error",
+            errorDetail: "Update profile failed",
+          },
+        };
+      }
+      return {
+        status: StatusCodes.OK,
+        success: true,
+        data: user,
+        error: null,
+      };
+    } catch (error: any) {
       return {
         status: StatusCodes.INTERNAL_SERVER_ERROR,
         success: false,

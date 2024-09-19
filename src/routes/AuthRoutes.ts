@@ -22,17 +22,14 @@ class AuthRoutes extends BaseRoute {
     this.router.post("/login", (req: ExpressRequest, res: Response) => {
       this._authController.login(req, res);
     });
-    this.router.get(
-      "/get-me",
-      (req: ExpressRequest, res: Response, next) => {
-        this._authenticationMiddleware.authenticate(req, res, next);
-      },
-      (req: ExpressRequest, res: Response) => {
-        this._authController.getMe(req, res);
-      }
-    );
+    this.router.get("/get-me", (req: ExpressRequest, res: Response) => {
+      this._authController.getMe(req, res);
+    });
     this.router.get("/get-group-roles", (req: ExpressRequest, res: Response) => {
       this._authController.getAllGroupRoles(req, res);
+    });
+    this.router.put("/update-my-profile", (req: ExpressRequest, res: Response) => {
+      this._authController.updateMyProfile(req, res);
     });
   }
 }
