@@ -12,6 +12,7 @@ import RoleService from "./RoleService";
 import { v4 as uuidv4 } from "uuid";
 import EGroupRole from "@/constants/GroupRole";
 import Extensions from "@/utils/Extensions";
+import CompanyStatus from "@/constants/CompanyStatus";
 
 export default class AuthService implements IAuthService {
   private _JwtService!: IJWTService;
@@ -130,11 +131,23 @@ export default class AuthService implements IAuthService {
         return userRoles;
       }
 
+      const checkIsRecruiter = await Repo.CompanyRepo.findOne({
+        where: {
+          recruiterId: user.data.id,
+          status: CompanyStatus.APPROVE,
+          isActive: true,
+          isDeleted: false,
+        },
+      });
+
+      const isRecruiter: boolean = checkIsRecruiter ? true : false;
+
       const tokenPayload: IAccessTokenPayload = {
         userId: user.data.id,
         email: user.data.email,
         role: userRoles.data,
         roleName: user.data.groupRole.name,
+        isRecruiter,
       };
 
       const token = this._JwtService.generateAccessToken(tokenPayload);

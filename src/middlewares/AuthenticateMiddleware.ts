@@ -16,6 +16,7 @@ export default class AuthenticationMiddleware {
       "/",
       "/auth/login",
       "/auth/register",
+      "/auth/get-group-roles",
       "/provinces/get-provincies",
       "/member-counts/get-member-counts",
     ];

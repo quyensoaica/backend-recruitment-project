@@ -3,6 +3,7 @@ export interface IAccessTokenPayload {
   email: string;
   role: string;
   roleName: string;
+  isRecruiter: boolean;
 }
 export interface IAccessTokenResponse {
   token: string;
